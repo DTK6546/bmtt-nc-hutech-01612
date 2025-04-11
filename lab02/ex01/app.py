@@ -9,27 +9,28 @@ def home():
     return render_template('index.html')
 
 # Router routes for caesar cipher
-@app.route("/caesar")
+@app.route("/caesar", methods=['GET', 'POST'])
 def caesar():
-    return render_template('caesar.html')
+    encrypted_message = None
+    decrypted_message = None
 
-@app.route("/encrypt", methods=['POST'])
-def caesar_encrypt():
-    text = request.form['inputPlainText']
-    key = int(request.form['inputKeyPlain'])
-    Caesar = CaesarCipher()
+    if request.method == 'POST':
+        # Lấy dữ liệu từ form
+        if 'inputPlainText' in request.form:  # Nếu là yêu cầu mã hóa
+            text = request.form['inputPlainText']
+            key = int(request.form['inputKeyPlain'])
+            Caesar = CaesarCipher()
 
-    encrypted_text = Caesar.encrypt_text(text, key)
-    return f"text: {text}<br/>key: {key}<br/>encrypted text: {encrypted_text}"
+            encrypted_message = Caesar.encrypt_text(text, key)
 
-@app.route("/decrypt", methods=['POST'])
-def caesar_decrypt():
-    text = request.form['inputCipherText']
-    key = int(request.form['inputKeyCipher'])
-    Caesar = CaesarCipher()
+        elif 'inputCipherText' in request.form:  # Nếu là yêu cầu giải mã
+            text = request.form['inputCipherText']
+            key = int(request.form['inputKeyCipher'])
+            Caesar = CaesarCipher()
 
-    decrypted_text = Caesar.decrypt_text(text, key)
-    return f"text: {text}<br/>key: {key}<br/>decrypted text: {decrypted_text}"
+            decrypted_message = Caesar.decrypt_text(text, key)
+
+    return render_template('caesar.html', encrypted_message=encrypted_message, decrypted_message=decrypted_message)
 
 # Main function
 if __name__ == "__main__":
